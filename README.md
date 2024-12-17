@@ -44,9 +44,9 @@ If no `startingTime` is provided, the endpoint will return all confirmed POs.
   "data": [
     {
       "id": "PO12345",
-      "projID": "Purchase Order for Steel Rods",
+      "projID": "P1234",
       "updatedAt": "2024-06-02T12:34:56Z",
-      "vendorID": "confirmed"
+      "vendorID": "V1234"
       // ... Remaining Fields
     },
     // ... more POs
@@ -115,10 +115,12 @@ Authorization: Bearer <your-token>
   "status": "success",
   "data": [
     {
-      "poId": "PO12345",
-      "description": "Purchase Order for Steel Rods",
+      "id": "PO12345",
+      "projID": "P1234",
       "updatedAt": "2024-06-02T12:34:56Z",
-      "status": "confirmed"
-    }
+      "vendorID": "V1234"
+      // ... Remaining Fields
+    },
+    // ... more POs
   ]
 }
