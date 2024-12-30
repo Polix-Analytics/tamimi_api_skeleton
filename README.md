@@ -1,40 +1,38 @@
 # API Documentation
 
-## Endpoint: `getConfirmedPOs`
+## Endpoint: `getVendorsByCreationTime`
 
-## Overview
-This endpoint retrieves all confirmed Purchase Orders (POs) that have been updated after a specified `startingTime`. If no `startingTime` is provided, the endpoint will return all confirmed POs.
+### Overview
+This endpoint retrieves all vendors that have been created within a specified date range.
 
 ---
 
-## Endpoint Details
+### Endpoint Details
 
 - **Method**: `GET`
-- **URL**: `/getConfirmedPOs`
+- **URL**: `/getVendorsByCreationTime`
 - **Authentication**: Required (Bearer Token)
 - **Content-Type**: `application/json`
 
 ---
 
-## Request Parameters
+### Request Parameters
 
-### Query Parameters
-| Parameter      | Type     | Required | Description                                                                 |
-|----------------|----------|----------|-----------------------------------------------------------------------------|
-| `startingTime` | `string` | No       | A UTC timestamp (ISO 8601 format) specifying the starting date-time filter. |
+#### Query Parameters
+| Parameter | Type     | Required | Description                                                                 |
+|-----------|----------|----------|-----------------------------------------------------------------------------|
+| `from`    | `string` | Yes      | A UTC timestamp (ISO 8601 format) specifying the start date-time filter.     |
+| `to`      | `string` | Yes      | A UTC timestamp (ISO 8601 format) specifying the end date-time filter.       |
 
 **Example**:
 ```
-GET /getConfirmedPOs?startingTime=2024-06-01T00:00:00Z
+GET /getVendorsByCreationTime?from=2024-06-01T00:00:00Z&to=2024-06-30T23:59:59Z
 ```
-
-If no `startingTime` is provided, the endpoint will return all confirmed POs.
-
 ---
 
-## Response
+### Response
 
-### Success Response
+#### Success Response
 **Status Code**: `200 OK`
 
 **Response Body**:
@@ -43,31 +41,31 @@ If no `startingTime` is provided, the endpoint will return all confirmed POs.
   "status": "success",
   "data": [
     {
-      "id": "PO12345",
-      "projID": "P1234",
-      "updatedAt": "2024-06-02T12:34:56Z",
-      "vendorID": "V1234"
-      // ... Remaining Fields
+      "vendor_id": "V1234",
+      "name": "Vendor Name",
+      "created_at": "2024-06-01T12:34:56Z",
+      "updated_at": "2024-06-02T12:34:56Z"
+      // ... Additional Fields
     },
-    // ... more POs
+    // ... more vendors
   ]
 }
 ```
 
-### Error Responses
+#### Error Responses
 
-#### Invalid `startingTime`
+##### Invalid or Missing `from` or `to`
 **Status Code**: `400 Bad Request`
 
 **Response Body**:
 ```json
 {
   "status": "error",
-  "message": "Invalid startingTime format. Use ISO 8601 format (e.g., 2024-06-01T00:00:00Z)."
+  "message": "Invalid or missing from or to. Use ISO 8601 format (e.g., 2024-06-01T00:00:00Z)."
 }
 ```
 
-#### Unauthorized Access
+##### Unauthorized Access
 **Status Code**: `401 Unauthorized`
 
 **Response Body**:
@@ -78,7 +76,7 @@ If no `startingTime` is provided, the endpoint will return all confirmed POs.
 }
 ```
 
-#### Internal Server Error
+##### Internal Server Error
 **Status Code**: `500 Internal Server Error`
 
 **Response Body**:
@@ -91,36 +89,458 @@ If no `startingTime` is provided, the endpoint will return all confirmed POs.
 
 ---
 
-## Example Requests
+### Example Requests
 
-### Request with `startingTime`:
+#### Request with `from` and `to`:
 ```
-GET /getConfirmedPOs?startingTime=2024-06-01T00:00:00Z
-Authorization: Bearer <your-token>
-```
-
-### Request without `startingTime`:
-```
-GET /getConfirmedPOs
+GET /getVendorsByCreationTime?from=2024-06-01T00:00:00Z&to=2024-06-30T23:59:59Z
 Authorization: Bearer <your-token>
 ```
 
 ---
 
-## Example Response
+## Endpoint: `getVendorsByUpdateTime`
 
-**Example Success Response**:
+### Overview
+This endpoint retrieves all vendors that have been updated within a specified date range.
+
+---
+
+### Endpoint Details
+
+- **Method**: `GET`
+- **URL**: `/getVendorsByUpdateTime`
+- **Authentication**: Required (Bearer Token)
+- **Content-Type**: `application/json`
+
+---
+
+### Request Parameters
+
+#### Query Parameters
+| Parameter | Type     | Required | Description                                                                 |
+|-----------|----------|----------|-----------------------------------------------------------------------------|
+| `from`    | `string` | Yes      | A UTC timestamp (ISO 8601 format) specifying the start date-time filter.     |
+| `to`      | `string` | Yes      | A UTC timestamp (ISO 8601 format) specifying the end date-time filter.       |
+
+**Example**:
+```
+GET /getVendorsByUpdateTime?from=2024-06-01T00:00:00Z&to=2024-06-30T23:59:59Z
+```
+---
+
+### Response
+
+#### Success Response
+**Status Code**: `200 OK`
+
+**Response Body**:
 ```json
 {
   "status": "success",
   "data": [
     {
-      "id": "PO12345",
-      "projID": "P1234",
-      "updatedAt": "2024-06-02T12:34:56Z",
-      "vendorID": "V1234"
-      // ... Remaining Fields
+      "vendor_id": "V1234",
+      "name": "Vendor Name",
+      "created_at": "2024-05-01T12:34:56Z",
+      "updated_at": "2024-06-02T12:34:56Z"
+      // ... Additional Fields
     },
-    // ... more POs
+    // ... more vendors
   ]
 }
+```
+
+#### Error Responses
+
+##### Invalid or Missing `from` or `to`
+**Status Code**: `400 Bad Request`
+
+**Response Body**:
+```json
+{
+  "status": "error",
+  "message": "Invalid or missing from or to. Use ISO 8601 format (e.g., 2024-06-01T00:00:00Z)."
+}
+```
+
+##### Unauthorized Access
+**Status Code**: `401 Unauthorized`
+
+**Response Body**:
+```json
+{
+  "status": "error",
+  "message": "Unauthorized. Please provide a valid Bearer Token."
+}
+```
+
+##### Internal Server Error
+**Status Code**: `500 Internal Server Error`
+
+**Response Body**:
+```json
+{
+  "status": "error",
+  "message": "An unexpected error occurred. Please try again later."
+}
+```
+
+---
+
+### Example Requests
+
+#### Request with `from` and `to`:
+```
+GET /getVendorsByUpdateTime?from=2024-06-01T00:00:00Z&to=2024-06-30T23:59:59Z
+Authorization: Bearer <your-token>
+```
+
+---
+
+
+## Endpoint: `getProjectsByCreationTime`
+
+### Overview
+This endpoint retrieves all projects that have been created within a specified date range.
+
+---
+
+### Endpoint Details
+
+- **Method**: `GET`
+- **URL**: `/getProjectsByCreationTime`
+- **Authentication**: Required (Bearer Token)
+- **Content-Type**: `application/json`
+
+---
+
+### Request Parameters
+
+#### Query Parameters
+| Parameter | Type     | Required | Description                                                                 |
+|-----------|----------|----------|-----------------------------------------------------------------------------|
+| `from`    | `string` | Yes      | A UTC timestamp (ISO 8601 format) specifying the start date-time filter.     |
+| `to`      | `string` | Yes      | A UTC timestamp (ISO 8601 format) specifying the end date-time filter.       |
+
+**Example**:
+```
+GET /getProjectsByCreationTime?from=2024-06-01T00:00:00Z&to=2024-06-30T23:59:59Z
+```
+---
+
+### Response
+
+#### Success Response
+**Status Code**: `200 OK`
+
+**Response Body**:
+```json
+{
+  "status": "success",
+  "data": [
+    {
+      "project_id": "P1234",
+      "name": "Project Name",
+      "description": "Project Description",
+      "created_at": "2024-06-01T12:34:56Z",
+      "updated_at": "2024-06-02T12:34:56Z",
+      "bom": [
+        {
+          "item_id": "1234",
+          "allotted_quantity": 48
+        }
+      ]
+      // ... Additional Fields
+    },
+    // ... more projects
+  ]
+}
+```
+
+#### Error Responses
+
+##### Invalid or Missing `from` or `to`
+**Status Code**: `400 Bad Request`
+
+**Response Body**:
+```json
+{
+  "status": "error",
+  "message": "Invalid or missing from or to. Use ISO 8601 format (e.g., 2024-06-01T00:00:00Z)."
+}
+```
+
+##### Unauthorized Access
+**Status Code**: `401 Unauthorized`
+
+**Response Body**:
+```json
+{
+  "status": "error",
+  "message": "Unauthorized. Please provide a valid Bearer Token."
+}
+```
+
+##### Internal Server Error
+**Status Code**: `500 Internal Server Error`
+
+**Response Body**:
+```json
+{
+  "status": "error",
+  "message": "An unexpected error occurred. Please try again later."
+}
+```
+
+---
+
+### Example Requests
+
+#### Request with `from` and `to`:
+```
+GET /getProjectsByCreationTime?from=2024-06-01T00:00:00Z&to=2024-06-30T23:59:59Z
+Authorization: Bearer <your-token>
+```
+
+---
+
+## Endpoint: `getProjectsByUpdateTime`
+
+### Overview
+This endpoint retrieves all projects that have been updated within a specified date range.
+
+---
+
+### Endpoint Details
+
+- **Method**: `GET`
+- **URL**: `/getProjectsByUpdateTime`
+- **Authentication**: Required (Bearer Token)
+- **Content-Type**: `application/json`
+
+---
+
+### Request Parameters
+
+#### Query Parameters
+| Parameter | Type     | Required | Description                                                                 |
+|-----------|----------|----------|-----------------------------------------------------------------------------|
+| `from`    | `string` | Yes      | A UTC timestamp (ISO 8601 format) specifying the start date-time filter.     |
+| `to`      | `string` | Yes      | A UTC timestamp (ISO 8601 format) specifying the end date-time filter.       |
+
+**Example**:
+```
+GET /getProjectsByUpdateTime?from=2024-06-01T00:00:00Z&to=2024-06-30T23:59:59Z
+```
+---
+
+### Response
+
+#### Success Response
+**Status Code**: `200 OK`
+
+**Response Body**:
+```json
+{
+  "status": "success",
+  "data": [
+    {
+      "project_id": "P1234",
+      "name": "Project Name",
+      "description": "Project Description",
+      "created_at": "2024-05-01T12:34:56Z",
+      "updated_at": "2024-06-02T12:34:56Z",
+      "bom": [
+        {
+          "item_id": "1234",
+          "allotted_quantity": 48
+        }
+      ]
+      // ... Additional Fields
+    },
+    // ... more projects
+  ]
+}
+```
+
+#### Error Responses
+
+##### Invalid or Missing `from` or `to`
+**Status Code**: `400 Bad Request`
+
+**Response Body**:
+```json
+{
+  "status": "error",
+  "message": "Invalid or missing from or to. Use ISO 8601 format (e.g., 2024-06-01T00:00:00Z)."
+}
+```
+
+##### Unauthorized Access
+**Status Code**: `401 Unauthorized`
+
+**Response Body**:
+```json
+{
+  "status": "error",
+  "message": "Unauthorized. Please provide a valid Bearer Token."
+}
+```
+
+##### Internal Server Error
+**Status Code**: `500 Internal Server Error`
+
+**Response Body**:
+```json
+{
+  "status": "error",
+  "message": "An unexpected error occurred. Please try again later."
+}
+```
+
+---
+
+### Example Requests
+
+#### Request with `from` and `to`:
+```
+GET /getProjectsByUpdateTime?from=2024-06-01T00:00:00Z&to=2024-06-30T23:59:59Z
+Authorization: Bearer <your-token>
+```
+
+## Endpoint: `grnClosing`
+
+### Overview
+This endpoint is used to close a Goods Receipt Note (GRN) by providing details of the received items.
+
+---
+
+### Endpoint Details
+
+- **Method**: `POST`
+- **URL**: `/grnClosing`
+- **Authentication**: Required (Bearer Token)
+- **Content-Type**: `application/json`
+
+---
+
+### Request Body
+
+| Parameter              | Type            | Required | Description                                                  |
+|------------------------|-----------------|----------|--------------------------------------------------------------|
+| `po_id`                | `string`        | Yes      | The purchase order ID.                                       |
+| `images_at_receiving`  | `list of strings` | Yes      | List of image URLs taken at the time of receiving.           |
+| `items`                | `list of objects` | Yes      | List of items received. Each item includes the fields below. |
+| `items.good_quantity`  | `number`        | Yes      | Quantity of good items received.                             |
+| `items.damaged_quantity` | `number`      | Yes      | Quantity of damaged items received.                          |
+| `items.missing_quantity` | `number`      | Yes      | Quantity of missing items.                                   |
+| `items.comments`       | `string`        | No       | Comments about the received items.                           |
+| `items.received_by`    | `string`        | Yes      | Name of the person who received the items.                   |
+| `items.received_at`    | `string`        | Yes      | Timestamp (ISO 8601 format) when the items were received.    |
+| `is_partial`           | `boolean`       | Yes      | Indicates if the GRN is partial.                             |
+| `shipment_number`      | `number`        | No       | The shipment number, required if `is_partial` is true.       |
+
+**Example**:
+```json
+{
+  "po_id": "PO12345",
+  "images_at_receiving": [
+    "http://example.com/image1.jpg",
+    "http://example.com/image2.jpg"
+  ],
+  "items": [
+    {
+      "good_quantity": 10,
+      "damaged_quantity": 2,
+      "missing_quantity": 1,
+      "comments": "Some items were damaged",
+      "received_by": "John Doe",
+      "received_at": "2024-06-01T12:34:56Z"
+    }
+  ],
+  "is_partial": true,
+  "shipment_number": 1
+}
+```
+---
+
+### Response
+
+#### Success Response
+**Status Code**: `200 OK`
+
+**Response Body**:
+```json
+{
+  "status": "success",
+  "message": "GRN closed successfully."
+}
+```
+
+#### Error Responses
+
+##### Invalid or Missing Fields
+**Status Code**: `400 Bad Request`
+
+**Response Body**:
+```json
+{
+  "status": "error",
+  "message": "Invalid or missing fields in the request body."
+}
+```
+
+##### Unauthorized Access
+**Status Code**: `401 Unauthorized`
+
+**Response Body**:
+```json
+{
+  "status": "error",
+  "message": "Unauthorized. Please provide a valid Bearer Token."
+}
+```
+
+##### Internal Server Error
+**Status Code**: `500 Internal Server Error`
+
+**Response Body**:
+```json
+{
+  "status": "error",
+  "message": "An unexpected error occurred. Please try again later."
+}
+```
+
+---
+
+### Example Requests
+
+#### Request with all required fields:
+```
+POST /grnClosing
+Authorization: Bearer <your-token>
+Content-Type: application/json
+
+{
+  "po_id": "PO12345",
+  "images_at_receiving": [
+    "http://example.com/image1.jpg",
+    "http://example.com/image2.jpg"
+  ],
+  "items": [
+    {
+      "good_quantity": 10,
+      "damaged_quantity": 2,
+      "missing_quantity": 1,
+      "comments": "Some items were damaged",
+      "received_by": "John Doe",
+      "received_at": "2024-06-01T12:34:56Z"
+    }
+  ],
+  "is_partial": true,
+  "shipment_number": 1
+}
+```
+
