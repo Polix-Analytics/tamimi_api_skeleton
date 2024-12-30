@@ -409,6 +409,9 @@ GET /getProjectsByUpdateTime?from=2024-06-01T00:00:00Z&to=2024-06-30T23:59:59Z
 Authorization: Bearer <your-token>
 ```
 
+---
+
+
 ## Endpoint: `grnClosing`
 
 ### Overview
@@ -427,19 +430,21 @@ This endpoint is used to close a Goods Receipt Note (GRN) by providing details o
 
 ### Request Body
 
-| Parameter              | Type            | Required | Description                                                  |
-|------------------------|-----------------|----------|--------------------------------------------------------------|
-| `po_id`                | `string`        | Yes      | The purchase order ID.                                       |
-| `images_at_receiving`  | `list of strings` | Yes      | List of image URLs taken at the time of receiving.           |
-| `items`                | `list of objects` | Yes      | List of items received. Each item includes the fields below. |
-| `items.good_quantity`  | `number`        | Yes      | Quantity of good items received.                             |
-| `items.damaged_quantity` | `number`      | Yes      | Quantity of damaged items received.                          |
-| `items.missing_quantity` | `number`      | Yes      | Quantity of missing items.                                   |
-| `items.comments`       | `string`        | No       | Comments about the received items.                           |
-| `items.received_by`    | `string`        | Yes      | Name of the person who received the items.                   |
-| `items.received_at`    | `string`        | Yes      | Timestamp (ISO 8601 format) when the items were received.    |
-| `is_partial`           | `boolean`       | Yes      | Indicates if the GRN is partial.                             |
-| `shipment_number`      | `number`        | No       | The shipment number, required if `is_partial` is true.       |
+| Parameter                  | Type              | Required | Description                                                 |
+|----------------------------|-------------------|----------|-------------------------------------------------------------|
+| `po_id`                    | `string`          | Yes      | The purchase order ID.                                      |
+| `images_at_receiving`      | `list of strings` | Yes      | List of image URLs taken at the time of receiving.          |
+| `items`                    | `list of objects` | Yes      | List of items received. Each item includes the fields below. |
+| `items.good_quantity`      | `number`          | Yes      | Quantity of good items received.                            |
+| `items.damaged_quantity`   | `number`          | Yes      | Quantity of damaged items received.                         |
+| `items.missing_quantity`   | `number`          | Yes      | Quantity of missing items.                                  |
+| `items.comments`           | `string`          | No       | Comments about the received items.                          |
+| `items.received_by`        | `string`          | Yes      | Name of the person who received the items.                  |
+| `items.received_at`        | `string`          | Yes      | Timestamp (ISO 8601 format) when the items were received.   |
+| `items.site_warehouse_location` | `string`     | Yes      | Exact Location of the item.                 |
+| `is_partial`               | `boolean`         | Yes      | Indicates if the GRN is partial.                            |
+| `shipment_number`          | `number`          | No       | The shipment number, required if `is_partial` is true.      |
+| `close_for_receipt`        | `boolean`         | No       | Used to to manage damaged items.                            |
 
 **Example**:
 ```json
@@ -456,11 +461,13 @@ This endpoint is used to close a Goods Receipt Note (GRN) by providing details o
       "missing_quantity": 1,
       "comments": "Some items were damaged",
       "received_by": "John Doe",
-      "received_at": "2024-06-01T12:34:56Z"
+      "received_at": "2024-06-01T12:34:56Z",
+      "site_warehouse_location": "691 Buraq, A1"
     }
   ],
   "is_partial": true,
-  "shipment_number": 1
+  "shipment_number": 1,
+  "close_for_receipt": false
 }
 ```
 ---
@@ -536,11 +543,12 @@ Content-Type: application/json
       "missing_quantity": 1,
       "comments": "Some items were damaged",
       "received_by": "John Doe",
-      "received_at": "2024-06-01T12:34:56Z"
+      "received_at": "2024-06-01T12:34:56Z",
+      "site_warehouse_location": "691 Buraq, A1"
     }
   ],
   "is_partial": true,
-  "shipment_number": 1
+  "shipment_number": 1,
+  "close_for_receipt": false
 }
 ```
-
