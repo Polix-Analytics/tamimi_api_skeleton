@@ -412,7 +412,7 @@ Authorization: Bearer <your-token>
 ---
 
 
-## Endpoint: `grnClosing`
+## Endpoint: `createGrn`
 
 ### Overview
 This endpoint is used to close a Goods Receipt Note (GRN) by providing details of the received items.
@@ -422,7 +422,7 @@ This endpoint is used to close a Goods Receipt Note (GRN) by providing details o
 ### Endpoint Details
 
 - **Method**: `POST`
-- **URL**: `/grnClosing`
+- **URL**: `/createGrn`
 - **Authentication**: Required (Bearer Token)
 - **Content-Type**: `application/json`
 
@@ -481,7 +481,7 @@ This endpoint is used to close a Goods Receipt Note (GRN) by providing details o
 ```json
 {
   "status": "success",
-  "message": "GRN closed successfully."
+  "message": "GRN created successfully."
 }
 ```
 
@@ -526,7 +526,7 @@ This endpoint is used to close a Goods Receipt Note (GRN) by providing details o
 
 #### Request with all required fields:
 ```
-POST /grnClosing
+POST /createGrn
 Authorization: Bearer <your-token>
 Content-Type: application/json
 
@@ -551,4 +551,226 @@ Content-Type: application/json
   "shipment_number": 1,
   "close_for_receipt": false
 }
+```
+
+---
+
+## Endpoint: `getItemsByCreationTime`
+
+### Overview
+This endpoint retrieves all items that have been created within a specified date range.
+
+---
+
+### Endpoint Details
+
+- **Method**: `GET`
+- **URL**: `/getItemsByCreationTime`
+- **Authentication**: Required (Bearer Token)
+- **Content-Type**: `application/json`
+
+---
+
+### Request Parameters
+
+#### Query Parameters
+| Parameter | Type     | Required | Description                                                                 |
+|-----------|----------|----------|-----------------------------------------------------------------------------|
+| `from`    | `string` | Yes      | A UTC timestamp (ISO 8601 format) specifying the start date-time filter.     |
+| `to`      | `string` | Yes      | A UTC timestamp (ISO 8601 format) specifying the end date-time filter.       |
+
+**Example**:
+```
+GET /getItemsByCreationTime?from=2024-06-01T00:00:00Z&to=2024-06-30T23:59:59Z
+```
+---
+
+### Response
+
+#### Success Response
+**Status Code**: `200 OK`
+
+**Response Body**:
+```json
+{
+  "status": "success",
+  "data": [
+    {
+      "item_number": "I1234",
+      "product_name": "Product Name",
+      "search_name": "Search Name",
+      "bom_unit": "Unit",
+      "item_type": "Type",
+      "line_matching_policy": "Policy",
+      "project_category": "Category",
+      "created_at": "2024-06-01T12:34:56Z",
+      "created_by": "Creator",
+      "modified_by": "Modifier",
+      "modified_at": "2024-06-02T12:34:56Z",
+      "price": 100.0,
+      "purchase_unit": "Unit",
+      "inventory_unit": "Unit",
+      "sales_unit": "Unit",
+      "item_group": "Group",
+      "item_model_group": "Model Group"
+    },
+    // ... more items
+  ]
+}
+```
+
+#### Error Responses
+
+##### Invalid or Missing `from` or `to`
+**Status Code**: `400 Bad Request`
+
+**Response Body**:
+```json
+{
+  "status": "error",
+  "message": "Invalid or missing from or to. Use ISO 8601 format (e.g., 2024-06-01T00:00:00Z)."
+}
+```
+
+##### Unauthorized Access
+**Status Code**: `401 Unauthorized`
+
+**Response Body**:
+```json
+{
+  "status": "error",
+  "message": "Unauthorized. Please provide a valid Bearer Token."
+}
+```
+
+##### Internal Server Error
+**Status Code**: `500 Internal Server Error`
+
+**Response Body**:
+```json
+{
+  "status": "error",
+  "message": "An unexpected error occurred. Please try again later."
+}
+```
+
+---
+
+### Example Requests
+
+#### Request with `from` and `to`:
+```
+GET /getItemsByCreationTime?from=2024-06-01T00:00:00Z&to=2024-06-30T23:59:59Z
+Authorization: Bearer <your-token>
+```
+
+---
+
+## Endpoint: `getItemsByUpdateTime`
+
+### Overview
+This endpoint retrieves all items that have been updated within a specified date range.
+
+---
+
+### Endpoint Details
+
+- **Method**: `GET`
+- **URL**: `/getItemsByUpdateTime`
+- **Authentication**: Required (Bearer Token)
+- **Content-Type**: `application/json`
+
+---
+
+### Request Parameters
+
+#### Query Parameters
+| Parameter | Type     | Required | Description                                                                 |
+|-----------|----------|----------|-----------------------------------------------------------------------------|
+| `from`    | `string` | Yes      | A UTC timestamp (ISO 8601 format) specifying the start date-time filter.     |
+| `to`      | `string` | Yes      | A UTC timestamp (ISO 8601 format) specifying the end date-time filter.       |
+
+**Example**:
+```
+GET /getItemsByUpdateTime?from=2024-06-01T00:00:00Z&to=2024-06-30T23:59:59Z
+```
+---
+
+### Response
+
+#### Success Response
+**Status Code**: `200 OK`
+
+**Response Body**:
+```json
+{
+  "status": "success",
+  "data": [
+    {
+      "item_number": "I1234",
+      "product_name": "Product Name",
+      "search_name": "Search Name",
+      "bom_unit": "Unit",
+      "item_type": "Type",
+      "line_matching_policy": "Policy",
+      "project_category": "Category",
+      "created_at": "2024-05-01T12:34:56Z",
+      "created_by": "Creator",
+      "modified_by": "Modifier",
+      "modified_at": "2024-06-02T12:34:56Z",
+      "price": 100.0,
+      "purchase_unit": "Unit",
+      "inventory_unit": "Unit",
+      "sales_unit": "Unit",
+      "item_group": "Group",
+      "item_model_group": "Model Group"
+    },
+    // ... more items
+  ]
+}
+```
+
+#### Error Responses
+
+##### Invalid or Missing `from` or `to`
+**Status Code**: `400 Bad Request`
+
+**Response Body**:
+```json
+{
+  "status": "error",
+  "message": "Invalid or missing from or to. Use ISO 8601 format (e.g., 2024-06-01T00:00:00Z)."
+}
+```
+
+##### Unauthorized Access
+**Status Code**: `401 Unauthorized`
+
+**Response Body**:
+```json
+{
+  "status": "error",
+  "message": "Unauthorized. Please provide a valid Bearer Token."
+}
+```
+
+##### Internal Server Error
+**Status Code**: `500 Internal Server Error`
+
+**Response Body**:
+```json
+{
+  "status": "error",
+  "message": "An unexpected error occurred. Please try again later."
+}
+```
+
+---
+
+### Example Requests
+
+#### Request with `from` and `to`:
+```
+GET /getItemsByUpdateTime?from=2024-06-01T00:00:00Z&to=2024-06-30T23:59:59Z
+Authorization: Bearer <your-token>
 ```
