@@ -795,29 +795,34 @@ This endpoint is used to issue materials by providing details of the requested i
 
 ### Request Body
 
-| Parameter  | Type              | Required | Description                             |
-|------------|-------------------|----------|-----------------------------------------|
-| `request_id` | `string`          | Yes      | The request ID.                         |
-| `site_id`    | `string`          | Yes      | The site ID.                            |
+| Parameter  | Type              | Required | Description                                                      |
+|------------|-------------------|----------|------------------------------------------------------------------|
+| `site_id`    | `string`          | Yes      | The site ID.                                                     |
+| `date`       | `datetime`        | Yes      | The date of issuance.                                            |
 | `items`      | `list of objects` | Yes      | List of items to be issued. Each item includes the fields below. |
-| `items.item_id` | `string`      | Yes      | The item ID.                            |
-| `items.quantity` | `number`     | Yes      | The quantity of the item to be issued.  |
+| `items.item_id` | `string`      | Yes      | The item ID.                                                     |
+| `items.quantity` | `number`     | Yes      | The quantity of the item to be issued.                           |
+| `items.project_id_for_procurement` | `string` | Yes | ID of the Project this Items was procured for.                   |
 
 **Example**:
 ```json
 {
-  "request_id": "REQ12345",
   "site_id": "SITE123",
+  "date": "2024-06-01T12:34:56Z",
   "items": [
     {
       "item_id": "ITEM123",
-      "quantity": 10
+      "quantity": 10,
+      "project_id_for_procurement": "PROJ123"
     },
     {
       "item_id": "ITEM456",
-      "quantity": 5
+      "quantity": 5,
+      "project_id_for_procurement": "PROJ456"
     }
-  ]
+    // ... more items
+  ],
+  // ... Additional Fields
 }
 ```
 ---
@@ -881,16 +886,18 @@ Authorization: Bearer <your-token>
 Content-Type: application/json
 
 {
-  "request_id": "REQ12345",
   "site_id": "SITE123",
+  "date": "2024-06-01T12:34:56Z",
   "items": [
     {
       "item_id": "ITEM123",
-      "quantity": 10
+      "quantity": 10,
+      "project_id_for_procurement": "PROJ123"
     },
     {
       "item_id": "ITEM456",
-      "quantity": 5
+      "quantity": 5,
+      "project_id_for_procurement": "PROJ456"
     }
   ]
 }
