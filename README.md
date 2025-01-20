@@ -774,3 +774,124 @@ GET /getItemsByUpdateTime?from=2024-06-01T00:00:00Z&to=2024-06-30T23:59:59Z
 GET /getItemsByUpdateTime?from=2024-06-01T00:00:00Z&to=2024-06-30T23:59:59Z
 Authorization: Bearer <your-token>
 ```
+
+---
+
+## Endpoint: `materialIssuance`
+
+### Overview
+This endpoint is used to issue materials by providing details of the requested items.
+
+---
+
+### Endpoint Details
+
+- **Method**: `POST`
+- **URL**: `/materialIssuance`
+- **Authentication**: Required (Bearer Token)
+- **Content-Type**: `application/json`
+
+---
+
+### Request Body
+
+| Parameter  | Type              | Required | Description                             |
+|------------|-------------------|----------|-----------------------------------------|
+| `request_id` | `string`          | Yes      | The request ID.                         |
+| `site_id`    | `string`          | Yes      | The site ID.                            |
+| `items`      | `list of objects` | Yes      | List of items to be issued. Each item includes the fields below. |
+| `items.item_id` | `string`      | Yes      | The item ID.                            |
+| `items.quantity` | `number`     | Yes      | The quantity of the item to be issued.  |
+
+**Example**:
+```json
+{
+  "request_id": "REQ12345",
+  "site_id": "SITE123",
+  "items": [
+    {
+      "item_id": "ITEM123",
+      "quantity": 10
+    },
+    {
+      "item_id": "ITEM456",
+      "quantity": 5
+    }
+  ]
+}
+```
+---
+
+### Response
+
+#### Success Response
+**Status Code**: `200 OK`
+
+**Response Body**:
+```json
+{
+  "status": "success",
+  "message": "Materials issued successfully."
+}
+```
+
+#### Error Responses
+
+##### Invalid or Missing Fields
+**Status Code**: `400 Bad Request`
+
+**Response Body**:
+```json
+{
+  "status": "error",
+  "message": "Invalid or missing fields in the request body."
+}
+```
+
+##### Unauthorized Access
+**Status Code**: `401 Unauthorized`
+
+**Response Body**:
+```json
+{
+  "status": "error",
+  "message": "Unauthorized. Please provide a valid Bearer Token."
+}
+```
+
+##### Internal Server Error
+**Status Code**: `500 Internal Server Error`
+
+**Response Body**:
+```json
+{
+  "status": "error",
+  "message": "An unexpected error occurred. Please try again later."
+}
+```
+
+---
+
+### Example Requests
+
+#### Request with all required fields:
+```
+POST /materialIssuance
+Authorization: Bearer <your-token>
+Content-Type: application/json
+
+{
+  "request_id": "REQ12345",
+  "site_id": "SITE123",
+  "items": [
+    {
+      "item_id": "ITEM123",
+      "quantity": 10
+    },
+    {
+      "item_id": "ITEM456",
+      "quantity": 5
+    }
+  ]
+}
+```
