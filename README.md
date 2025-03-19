@@ -777,17 +777,10 @@ Authorization: Bearer <your-token>
 
 ---
 
-## Endpoint: `materialIssuance`
-
-### Overview
-This endpoint is used to issue materials by providing details of the requested items.
-
----
-
 ### Endpoint Details
 
 - **Method**: `POST`
-- **URL**: `/materialIssuance`
+- **URL**: `/CreateTransferjournal`
 - **Authentication**: Required (Bearer Token)
 - **Content-Type**: `application/json`
 
@@ -795,36 +788,44 @@ This endpoint is used to issue materials by providing details of the requested i
 
 ### Request Body
 
-| Parameter  | Type              | Required | Description                                                      |
-|------------|-------------------|----------|------------------------------------------------------------------|
-| `site_id`    | `string`          | Yes      | The site ID.                                                     |
-| `date`       | `datetime`        | Yes      | The date of issuance.                                            |
-| `items`      | `list of objects` | Yes      | List of items to be issued. Each item includes the fields below. |
-| `items.item_id` | `string`      | Yes      | The item ID.                                                     |
-| `items.quantity` | `number`     | Yes      | The quantity of the item to be issued.                           |
-| `items.project_id_for_procurement` | `string` | Yes | ID of the Project this Items was procured for.                   |
+| Parameter                                                        | Type | Required | Description |
+|------------------------------------------------------------------|------|----------|-------------|
+| `Transferjournal`                                                | `object` | Yes | The transfer journal object |
+| `Transferjournal.journalDesc`                                    | `string` | Yes | Description of the transfer journal |
+| `Transferjournal.transferJournalId`                              | `string` | Yes | A unique ID for this transfer journal (will be required during posting) |
+| `Transferjournal.inventjournalTransLines`                        | `array` | Yes | Array of items to transfer |
+| `Transferjournal.inventjournalTransLines[].ItemId`               | `string` | Yes | ID of the item being transferred |
+| `Transferjournal.inventjournalTransLines[].FromwMSLocationId`    | `string` | Yes | WMS location ID of the source |
+| `Transferjournal.inventjournalTransLines[].Frominventlocationid` | `string` | Yes | Inventory location ID of the source |
+| `Transferjournal.inventjournalTransLines[].FrominventSideId`     | `string` | Yes | Inventory site ID of the source |
+| `Transferjournal.inventjournalTransLines[].TowMSLocationId`      | `string` | Yes | WMS location ID of the destination |
+| `Transferjournal.inventjournalTransLines[].Toinventlocationid`   | `string` | Yes | Inventory location ID of the destination |
+| `Transferjournal.inventjournalTransLines[].ToinventSiteId`       | `string` | Yes | Inventory site ID of the destination |
+| `Transferjournal.inventjournalTransLines[].Qty`                  | `number` | Yes | Quantity to be transferred |
 
 **Example**:
 ```json
 {
-  "site_id": "SITE123",
-  "date": "2024-06-01T12:34:56Z",
-  "items": [
-    {
-      "item_id": "ITEM123",
-      "quantity": 10,
-      "project_id_for_procurement": "PROJ123"
-    },
-    {
-      "item_id": "ITEM456",
-      "quantity": 5,
-      "project_id_for_procurement": "PROJ456"
-    }
-    // ... more items
-  ],
-  // ... Additional Fields
+    "Transferjournal":
+        {
+            "transferJournalId": "TJ12345",
+            "journalDesc": "transfer Journal from API",
+            "inventjournalTransLines": [
+                {
+                    "ItemId": "183670",
+                    "FromwMSLocationId": "QIDDIYA",
+                    "Frominventlocationid": "691",
+                    "FrominventSideId": "PEB-JUBAIL",
+                    "TowMSLocationId": "Default",
+                    "Toinventlocationid": "691",
+                    "ToinventSiteId": "PEB-JUBAIL",
+                    "Qty": 23
+                }
+            ]
+        }
 }
 ```
+
 ---
 
 ### Response
@@ -836,7 +837,8 @@ This endpoint is used to issue materials by providing details of the requested i
 ```json
 {
   "status": "success",
-  "message": "Materials issued successfully."
+  "message": "Transfer journal created successfully",
+  "transferJournalId": "TJ12345"
 }
 ```
 
@@ -877,28 +879,107 @@ This endpoint is used to issue materials by providing details of the requested i
 
 ---
 
-### Example Requests
+## Endpoint: `PostTransferJournal`
 
-#### Request with all required fields:
-```
-POST /materialIssuance
-Authorization: Bearer <your-token>
-Content-Type: application/json
+### Overview
+This endpoint posts a previously created transfer journal using the same transferJournalID that was provided during creation.
 
+---
+
+### Endpoint Details
+
+- **Method**: `POST`
+- **URL**: `/PostTransferJournal`
+- **Authentication**: Required (Bearer Token)
+- **Content-Type**: `application/json`
+
+---
+
+### Request Body
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `transferJournalId` | `string` | Yes | The unique ID of the transfer journal to post (must match the ID provided in CreateTransferjournal) |
+
+**Example**:
+```json
 {
-  "site_id": "SITE123",
-  "date": "2024-06-01T12:34:56Z",
-  "items": [
-    {
-      "item_id": "ITEM123",
-      "quantity": 10,
-      "project_id_for_procurement": "PROJ123"
-    },
-    {
-      "item_id": "ITEM456",
-      "quantity": 5,
-      "project_id_for_procurement": "PROJ456"
-    }
-  ]
+  "transferJournalId": "TJ12345"
+}
+```
+
+---
+
+### Response
+
+#### Success Response
+**Status Code**: `200 OK`
+
+**Response Body**:
+```json
+{
+  "status": "success",
+  "message": "Transfer journal posted successfully",
+  "details": {
+    "transferJournalId": "TJ12345",
+    "postedAt": "2024-07-01T14:32:18Z"
+  }
+}
+```
+
+#### Error Responses
+
+##### Invalid or Missing ID
+**Status Code**: `400 Bad Request`
+
+**Response Body**:
+```json
+{
+  "status": "error",
+  "message": "Invalid or missing transfer journal ID."
+}
+```
+
+##### Journal Not Found
+**Status Code**: `404 Not Found`
+
+**Response Body**:
+```json
+{
+  "status": "error",
+  "message": "Transfer journal with ID TJ12345 not found."
+}
+```
+
+##### ID Mismatch
+**Status Code**: `400 Bad Request`
+
+**Response Body**:
+```json
+{
+  "status": "error",
+  "message": "The provided transferJournalId does not match any previously created journal."
+}
+```
+
+##### Unauthorized Access
+**Status Code**: `401 Unauthorized`
+
+**Response Body**:
+```json
+{
+  "status": "error",
+  "message": "Unauthorized. Please provide a valid Bearer Token."
+}
+```
+
+##### Internal Server Error
+**Status Code**: `500 Internal Server Error`
+
+**Response Body**:
+```json
+{
+  "status": "error",
+  "message": "An unexpected error occurred. Please try again later."
 }
 ```
