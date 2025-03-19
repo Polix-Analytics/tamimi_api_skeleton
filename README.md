@@ -777,6 +777,13 @@ Authorization: Bearer <your-token>
 
 ---
 
+## Endpoint: `CreateTransferjournal`
+
+### Overview
+This endpoint creates a transfer journal with information about both source and destination locations, using a client-provided transferJournalID that will be used for posting later.
+
+---
+
 ### Endpoint Details
 
 - **Method**: `POST`
